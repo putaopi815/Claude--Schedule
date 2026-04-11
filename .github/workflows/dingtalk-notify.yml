@@ -1,73 +1,88 @@
-name: Send Daily Digest to DingTalk
+name: DingTalk Notification
 
 on:
   push:
     branches:
       - '**'
     paths:
-      - '**/*.md'
-      - '!README.md'
-      - '!CLAUDE.md'
-      - '!**/CLAUDE.md'
+      - 'output/**/*.md'
 
 jobs:
-  send-dingtalk:
+  notify:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Find latest daily digest
-        id: find-file
+      - name: Detect task and send DingTalk notification
         run: |
-          FILE=$(find . -maxdepth 2 -name "????-??-??-*.md" -not -name "README.md" -not -name "CLAUDE.md" | sort | tail -1)
-          if [ -z "$FILE" ]; then
-            echo "No daily digest file found, skipping."
-            echo "found=false" >> "$GITHUB_OUTPUT"
+          # Find the changed markdown file in output/
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- 'output/**/*.md' 2>/dev/null || echo "")
+
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No output markdown files changed, skipping."
             exit 0
           fi
-          echo "file=$FILE" >> "$GITHUB_OUTPUT"
-          echo "found=true" >> "$GITHUB_OUTPUT"
-          echo "Found: $FILE"
 
-      - name: Send to DingTalk
-        if: steps.find-file.outputs.found == 'true'
-        env:
-          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
-          DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
-          DIGEST_FILE: ${{ steps.find-file.outputs.file }}
-        run: |
-          timestamp=$(date +%s%3N)
-          string_to_sign="${timestamp}\n${DINGTALK_SECRET}"
-          sign=$(printf '%s' "$string_to_sign" \
-            | openssl dgst -sha256 -hmac "$DINGTALK_SECRET" -binary \
-            | base64 \
-            | python3 -c "import sys,urllib.parse; print(urllib.parse.quote(sys.stdin.read().strip()))")
-          signed_url="${DINGTALK_WEBHOOK}&timestamp=${timestamp}&sign=${sign}"
+          echo "Changed files: $CHANGED_FILES"
 
-          title=$(grep -m1 '^# ' "$DIGEST_FILE" | sed 's/^# //')
-          [ -z "$title" ] && title="AI + UX Daily Digest"
+          # Process each changed file
+          for FILE in $CHANGED_FILES; do
+            if [ ! -f "$FILE" ]; then
+              echo "File not found: $FILE, skipping."
+              continue
+            fi
 
-          content=$(python3 -c "
-          import sys, json
-          with open(sys.argv[1], 'r') as f:
-              text = f.read()
-          print(json.dumps(text))
-          " "$DIGEST_FILE")
+            # Detect task from path
+            case "$FILE" in
+              output/ux-ai-daily/*)
+                TITLE="UX-AI-Daily Report"
+                WEBHOOK_URL="${{ secrets.DINGTALK_WEBHOOK_UX_AI_DAILY }}"
+                ;;
+              output/github-claude-skill/*)
+                TITLE="GitHub+Claude-Skill Report"
+                WEBHOOK_URL="${{ secrets.DINGTALK_WEBHOOK_GITHUB_CLAUDE_SKILL }}"
+                ;;
+              output/alpha-radar/*)
+                TITLE="Alpha Radar Report"
+                WEBHOOK_URL="${{ secrets.DINGTALK_WEBHOOK_ALPHA_RADAR }}"
+                ;;
+              output/weekly-intelligence/*)
+                TITLE="Weekly Intelligence Report"
+                WEBHOOK_URL="${{ secrets.DINGTALK_WEBHOOK_WEEKLY_INTELLIGENCE }}"
+                ;;
+              *)
+                echo "Unknown task for file: $FILE, skipping."
+                continue
+                ;;
+            esac
 
-          payload="{\"msgtype\":\"markdown\",\"markdown\":{\"title\":\"${title}\",\"text\":${content}}}"
+            if [ -z "$WEBHOOK_URL" ]; then
+              echo "Warning: No webhook URL configured for $TITLE"
+              continue
+            fi
 
-          response=$(curl -s -w "\n%{http_code}" \
-            -H "Content-Type: application/json" \
-            -d "$payload" \
-            "$signed_url")
+            echo "Sending notification for: $TITLE"
 
-          http_code=$(echo "$response" | tail -1)
-          body=$(echo "$response" | head -n -1)
-          echo "HTTP: $http_code | Response: $body"
+            # Build payload with jq for safe JSON encoding
+            SUMMARY=$(head -50 "$FILE")
+            PAYLOAD=$(jq -n \
+              --arg title "$TITLE" \
+              --arg text "$SUMMARY" \
+              '{msgtype:"markdown",markdown:{title:$title,text:$text}}')
 
-          if [ "$http_code" != "200" ]; then
-            echo "::error::DingTalk returned HTTP $http_code"
-            exit 1
-          fi
-          echo "Sent to DingTalk successfully!"
+            # Send to DingTalk
+            RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$WEBHOOK_URL" \
+              -H "Content-Type: application/json" \
+              -d "$PAYLOAD")
+
+            HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+            BODY=$(echo "$RESPONSE" | sed '$d')
+            echo "HTTP: $HTTP_CODE | Response: $BODY"
+
+            if echo "$BODY" | grep -q '"errcode":0'; then
+              echo "Sent successfully: $TITLE"
+            else
+              echo "::warning::DingTalk notification failed for $TITLE: $BODY"
+            fi
+          done

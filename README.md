@@ -1,34 +1,53 @@
-# Claude Schedule
+# Claude--Schedule
 
-A collection of automated schedules — curated digests, reports, and notifications powered by Claude Code.
+Claude Code Scheduled Tasks with DingTalk (钉钉) group notifications.
 
-## Structure
+## Scheduled Tasks
+
+| Task | Schedule | Description |
+|------|----------|-------------|
+| **UX-AI-Daily** | Every day 9:30 | AI + UX daily digest for designers & product builders |
+| **GitHub + Claude-Skill** | Every day 9:00 | GitHub trending repos + Claude skills report |
+| **Claude Code Alpha Radar** | Every day 10:00 | Cutting-edge AI technology & product radar |
+| **Claude Code Weekly Intelligence** | Every Monday 10:30 | Weekly AI intelligence summary |
+
+## Project Structure
 
 ```
 Claude--Schedule/
-├── ai-ux-daily/                     # AI+UX 每日日报
-│   ├── YYYY-MM-DD-ai-ux-daily.md    # 日报内容
-│   ├── dingtalk_notify.py           # 钉钉推送脚本
-│   └── .env                         # 钉钉凭证（本地创建，不入库）
-├── .github/workflows/               # GitHub Actions 自动化
-│   └── dingtalk-ai-ux-daily.yml     # AI+UX 日报自动推送
-├── .gitignore
-└── README.md
+├── CLAUDE.md                        # Task instructions for Claude Code
+├── config/
+│   └── dingtalk.conf                # DingTalk webhook config
+├── scripts/
+│   └── dingtalk_notify.sh           # DingTalk notification script
+└── output/
+    ├── weekly-intelligence/         # Weekly reports (Monday)
+    ├── alpha-radar/                 # Daily alpha radar
+    ├── github-claude-skill/         # Daily GitHub + skill reports
+    └── ux-ai-daily/                 # Daily UX + AI digests
 ```
 
-## Schedules
+## DingTalk Setup
 
-### ai-ux-daily
+1. Open your DingTalk group → `...` → Group Settings → Smart Assistant → Add Robot
+2. Choose **Custom** robot, set security to **IP Whitelist**
+3. Copy the Webhook URL
+4. Edit `config/dingtalk.conf` and replace `YOUR_ACCESS_TOKEN_HERE` with your actual token
 
-AI + UX 每日精选日报，涵盖工具、新闻、GitHub 趋势和行业洞察。
+## Manual Notification
 
-- **推送**: 钉钉群（自动 + 手动）
-- **触发**: push 新日报 / 每天北京时间 09:00 / 手动触发
-- **格式**: Markdown，按分类组织，附来源链接
+```bash
+# Send notification from a generated report
+bash scripts/dingtalk_notify.sh --task ux-ai-daily --file output/ux-ai-daily/2026-04-11-ai-ux-daily.md
 
-## Adding a New Schedule
+# Send a custom message
+bash scripts/dingtalk_notify.sh "Custom Title" "Message content in **markdown**"
+```
 
-1. 创建新目录: `your-schedule-name/`
-2. 添加内容文件和推送脚本
-3. 在 `.github/workflows/` 下创建对应的 workflow
-4. 仓库级 Secrets 可共享，无需重复配置
+## How It Works
+
+Each scheduled task runs as a Claude Code session that:
+1. Researches and generates a markdown report
+2. Saves it to `output/<task-name>/`
+3. Sends a summary to DingTalk via webhook
+4. Commits and pushes to this repository

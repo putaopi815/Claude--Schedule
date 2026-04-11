@@ -81,7 +81,7 @@ def extract_title(content):
     return "AI + UX Daily Digest"
 
 
-def send_markdown(title, content, webhook_url, secret):
+def send_markdown(title, content, webhook_url, secret, dry_run=False):
     """发送 Markdown 消息到钉钉群"""
     url = get_signed_url(webhook_url, secret)
     adapted_content = md_to_dingtalk_markdown(content)
@@ -95,6 +95,31 @@ def send_markdown(title, content, webhook_url, secret):
         },
     }
 
+    if dry_run:
+        print("=" * 60)
+        print("🔍 DRY RUN — 以下为将要发送的请求内容")
+        print("=" * 60)
+        # 脱敏显示 URL
+        parsed = urllib.parse.urlparse(url)
+        qs = urllib.parse.parse_qs(parsed.query)
+        token_masked = qs.get("access_token", [""])[0][:8] + "..."
+        sign_val = qs.get("sign", [""])[0][:16] + "..."
+        ts_val = qs.get("timestamp", [""])[0]
+        print(f"\n📡 Webhook: {parsed.scheme}://{parsed.netloc}{parsed.path}")
+        print(f"🔑 access_token: {token_masked}")
+        print(f"⏱  timestamp: {ts_val}")
+        print(f"✍️  sign: {sign_val}")
+        print(f"\n📋 消息类型: markdown")
+        print(f"📌 标题: {title}")
+        print(f"📝 内容长度: {len(adapted_content)} 字符")
+        print(f"\n--- 内容预览 (前 500 字) ---")
+        print(adapted_content[:500])
+        if len(adapted_content) > 500:
+            print(f"\n... (省略 {len(adapted_content) - 500} 字)")
+        print("=" * 60)
+        print("✅ Dry run 完成，未实际发送")
+        return True
+
     headers = {"Content-Type": "application/json; charset=utf-8"}
     resp = requests.post(url, json=payload, headers=headers, timeout=10)
     result = resp.json()
@@ -107,7 +132,7 @@ def send_markdown(title, content, webhook_url, secret):
         return False
 
 
-def send_text(content, webhook_url, secret):
+def send_text(content, webhook_url, secret, dry_run=False):
     """发送纯文本消息到钉钉群"""
     url = get_signed_url(webhook_url, secret)
 
@@ -117,6 +142,25 @@ def send_text(content, webhook_url, secret):
             "content": content,
         },
     }
+
+    if dry_run:
+        print("=" * 60)
+        print("🔍 DRY RUN — 以下为将要发送的请求内容")
+        print("=" * 60)
+        parsed = urllib.parse.urlparse(url)
+        qs = urllib.parse.parse_qs(parsed.query)
+        token_masked = qs.get("access_token", [""])[0][:8] + "..."
+        sign_val = qs.get("sign", [""])[0][:16] + "..."
+        ts_val = qs.get("timestamp", [""])[0]
+        print(f"\n📡 Webhook: {parsed.scheme}://{parsed.netloc}{parsed.path}")
+        print(f"🔑 access_token: {token_masked}")
+        print(f"⏱  timestamp: {ts_val}")
+        print(f"✍️  sign: {sign_val}")
+        print(f"\n📋 消息类型: text")
+        print(f"📝 内容: {content}")
+        print("=" * 60)
+        print("✅ Dry run 完成，未实际发送")
+        return True
 
     headers = {"Content-Type": "application/json; charset=utf-8"}
     resp = requests.post(url, json=payload, headers=headers, timeout=10)
@@ -159,13 +203,16 @@ def main():
         sys.exit(1)
 
     args = sys.argv[1:]
+    dry_run = "--dry-run" in args
+    if dry_run:
+        args.remove("--dry-run")
 
     # --text 模式: 发送自定义文本
     if "--text" in args:
         idx = args.index("--text")
         if idx + 1 < len(args):
             text = args[idx + 1]
-            send_text(text, webhook_url, secret)
+            send_text(text, webhook_url, secret, dry_run=dry_run)
             return
         else:
             print("❌ --text 后需要提供消息内容")
@@ -181,7 +228,7 @@ def main():
                 sys.exit(1)
             content = filepath.read_text(encoding="utf-8")
             title = extract_title(content)
-            send_markdown(title, content, webhook_url, secret)
+            send_markdown(title, content, webhook_url, secret, dry_run=dry_run)
             return
         else:
             print("❌ --file 后需要提供文件路径")
@@ -198,7 +245,7 @@ def main():
     content = filepath.read_text(encoding="utf-8")
     title = extract_title(content)
     print(f"📤 正在推送: {filepath.name}")
-    send_markdown(title, content, webhook_url, secret)
+    send_markdown(title, content, webhook_url, secret, dry_run=dry_run)
 
 
 if __name__ == "__main__":

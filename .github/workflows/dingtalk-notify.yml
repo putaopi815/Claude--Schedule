@@ -1,0 +1,73 @@
+name: Send Daily Digest to DingTalk
+
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - '**/*.md'
+      - '!README.md'
+      - '!CLAUDE.md'
+      - '!**/CLAUDE.md'
+
+jobs:
+  send-dingtalk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Find latest daily digest
+        id: find-file
+        run: |
+          FILE=$(find . -maxdepth 2 -name "????-??-??-*.md" -not -name "README.md" -not -name "CLAUDE.md" | sort | tail -1)
+          if [ -z "$FILE" ]; then
+            echo "No daily digest file found, skipping."
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "file=$FILE" >> "$GITHUB_OUTPUT"
+          echo "found=true" >> "$GITHUB_OUTPUT"
+          echo "Found: $FILE"
+
+      - name: Send to DingTalk
+        if: steps.find-file.outputs.found == 'true'
+        env:
+          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+          DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
+          DIGEST_FILE: ${{ steps.find-file.outputs.file }}
+        run: |
+          timestamp=$(date +%s%3N)
+          string_to_sign="${timestamp}\n${DINGTALK_SECRET}"
+          sign=$(printf '%s' "$string_to_sign" \
+            | openssl dgst -sha256 -hmac "$DINGTALK_SECRET" -binary \
+            | base64 \
+            | python3 -c "import sys,urllib.parse; print(urllib.parse.quote(sys.stdin.read().strip()))")
+          signed_url="${DINGTALK_WEBHOOK}&timestamp=${timestamp}&sign=${sign}"
+
+          title=$(grep -m1 '^# ' "$DIGEST_FILE" | sed 's/^# //')
+          [ -z "$title" ] && title="AI + UX Daily Digest"
+
+          content=$(python3 -c "
+          import sys, json
+          with open(sys.argv[1], 'r') as f:
+              text = f.read()
+          print(json.dumps(text))
+          " "$DIGEST_FILE")
+
+          payload="{\"msgtype\":\"markdown\",\"markdown\":{\"title\":\"${title}\",\"text\":${content}}}"
+
+          response=$(curl -s -w "\n%{http_code}" \
+            -H "Content-Type: application/json" \
+            -d "$payload" \
+            "$signed_url")
+
+          http_code=$(echo "$response" | tail -1)
+          body=$(echo "$response" | head -n -1)
+          echo "HTTP: $http_code | Response: $body"
+
+          if [ "$http_code" != "200" ]; then
+            echo "::error::DingTalk returned HTTP $http_code"
+            exit 1
+          fi
+          echo "Sent to DingTalk successfully!"

@@ -1,22 +1,53 @@
-# AI + UX Daily Digest
+# Claude--Schedule
 
-A daily curated digest of the latest developments in AI related to user experience (UX) and product design.
+Claude Code Scheduled Tasks with DingTalk (钉钉) group notifications.
 
-## What's Covered
+## Scheduled Tasks
 
-- **Tools** — New AI tools for design-to-code, UI generation, prototyping, and agent workflows
-- **News** — Industry announcements and product launches in AI + UX
-- **GitHub** — Trending repositories for AI agents, MCP tools, and workflow automation
-- **Insights** — Emerging design patterns, community discussions, and expert analysis
+| Task | Schedule | Description |
+|------|----------|-------------|
+| **UX-AI-Daily** | Every day 9:30 | AI + UX daily digest for designers & product builders |
+| **GitHub + Claude-Skill** | Every day 9:00 | GitHub trending repos + Claude skills report |
+| **Claude Code Alpha Radar** | Every day 10:00 | Cutting-edge AI technology & product radar |
+| **Claude Code Weekly Intelligence** | Every Monday 10:30 | Weekly AI intelligence summary |
 
-## Format
+## Project Structure
 
-Each daily digest is a markdown file named `YYYY-MM-DD-ai-ux-daily.md` containing:
-- Concise bullet-point summaries grouped by category
-- Links to original sources
-- "Why it matters" context for UX designers and product builders
-- Top 5–10 high-signal items (quality over quantity)
+```
+Claude--Schedule/
+├── CLAUDE.md                        # Task instructions for Claude Code
+├── config/
+│   └── dingtalk.conf                # DingTalk webhook config
+├── scripts/
+│   └── dingtalk_notify.sh           # DingTalk notification script
+└── output/
+    ├── weekly-intelligence/         # Weekly reports (Monday)
+    ├── alpha-radar/                 # Daily alpha radar
+    ├── github-claude-skill/         # Daily GitHub + skill reports
+    └── ux-ai-daily/                 # Daily UX + AI digests
+```
 
-## Goal
+## DingTalk Setup
 
-Help UX designers and product builders stay ahead of AI-driven changes in design, tools, and workflows.
+1. Open your DingTalk group → `...` → Group Settings → Smart Assistant → Add Robot
+2. Choose **Custom** robot, set security to **IP Whitelist**
+3. Copy the Webhook URL
+4. Edit `config/dingtalk.conf` and replace `YOUR_ACCESS_TOKEN_HERE` with your actual token
+
+## Manual Notification
+
+```bash
+# Send notification from a generated report
+bash scripts/dingtalk_notify.sh --task ux-ai-daily --file output/ux-ai-daily/2026-04-11-ai-ux-daily.md
+
+# Send a custom message
+bash scripts/dingtalk_notify.sh "Custom Title" "Message content in **markdown**"
+```
+
+## How It Works
+
+Each scheduled task runs as a Claude Code session that:
+1. Researches and generates a markdown report
+2. Saves it to `output/<task-name>/`
+3. Sends a summary to DingTalk via webhook
+4. Commits and pushes to this repository

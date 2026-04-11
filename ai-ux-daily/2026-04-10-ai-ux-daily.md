@@ -1,4 +1,4 @@
-# AI + UX 每日精选 — 2026年4月10日
+# Claude Code Weekly Intelligence — 2026年4月10日
 
 > 精选 AI 与用户体验（UX）、产品设计、设计转代码工作流相关的最新动态。
 

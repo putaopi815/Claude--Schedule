@@ -1,11 +1,11 @@
-name: DingTalk Notify
+name: "DingTalk: AI+UX Daily Digest"
 
 on:
-  # 触发条件1: 新日报文件推送到 main 分支时自动发送
+  # 触发条件1: ai-ux-daily 目录下新日报推送到 main 时自动发送
   push:
     branches: [main]
     paths:
-      - '*-ai-ux-daily.md'
+      - 'ai-ux-daily/*-ai-ux-daily.md'
 
   # 触发条件2: 每天北京时间 9:00 自动发送当天日报
   schedule:
@@ -22,6 +22,9 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ai-ux-daily
     steps:
       - uses: actions/checkout@v4
 

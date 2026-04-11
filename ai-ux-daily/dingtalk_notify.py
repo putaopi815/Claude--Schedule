@@ -28,7 +28,10 @@ import requests
 def load_env(env_path=None):
     """从 .env 文件加载环境变量"""
     if env_path is None:
+        # 先找当前目录，再找项目根目录
         env_path = Path(__file__).parent / ".env"
+        if not env_path.exists():
+            env_path = Path(__file__).parent.parent / ".env"
     if not env_path.exists():
         return
     with open(env_path) as f:

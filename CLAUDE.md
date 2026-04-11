@@ -9,10 +9,6 @@ Claude--Schedule/
 ├── CLAUDE.md                    # This file - task instructions
 ├── README.md                    # Project documentation
 ├── .gitignore
-├── config/
-│   └── dingtalk.conf            # DingTalk webhook configuration
-├── scripts/
-│   └── dingtalk_notify.sh       # DingTalk notification script
 └── output/
     ├── weekly-intelligence/     # Weekly AI intelligence reports
     ├── alpha-radar/             # Daily alpha/cutting-edge AI radar
@@ -20,87 +16,96 @@ Claude--Schedule/
     └── ux-ai-daily/             # Daily UX + AI digest
 ```
 
-## DingTalk Notification
+## DingTalk Webhook Configuration
 
-After generating content, ALWAYS send a DingTalk notification using:
+Each task has its own DingTalk robot. After generating content, you MUST send a notification using the curl command below.
+
+**Webhook URLs:**
+- **ux-ai-daily**: `https://oapi.dingtalk.com/robot/send?access_token=133b5756fa296821042b075d1f5913b47f7cea09378f9fc9640a1e5b150310a1`
+- **github-claude-skill**: `https://oapi.dingtalk.com/robot/send?access_token=c2dffb9cbee65b4124e4fa478e3bba9ae7a970c9499fd5d5d2215b144cb74899`
+- **alpha-radar**: `https://oapi.dingtalk.com/robot/send?access_token=fec4aa71a87432764715ac48ae2cc542f91f66a5738f6725650c5fd46ec1796c`
+- **weekly-intelligence**: `https://oapi.dingtalk.com/robot/send?access_token=32d9a4e7aedd883f1f7137ce3ce8456a1dbfef10590566b294460c23dbe080d4`
+
+## DingTalk Notification Method
+
+After generating and saving the report, send notification using this curl command:
 
 ```bash
-bash scripts/dingtalk_notify.sh --task <task-name> --file <output-file-path>
+TITLE="任务标题"
+WEBHOOK_URL="对应任务的webhook url"
+SUMMARY=$(head -50 output-file-path)
+PAYLOAD=$(jq -n --arg title "$TITLE" --arg text "$SUMMARY" '{"msgtype":"markdown","markdown":{"title":$title,"text":$text}}')
+curl -s -X POST "$WEBHOOK_URL" -H "Content-Type: application/json" -d "$PAYLOAD"
 ```
 
-Task names: `weekly-intelligence`, `alpha-radar`, `github-claude-skill`, `ux-ai-daily`
+If `jq` is not available, use python:
+```bash
+python3 -c "
+import json, urllib.request
+title = '任务标题'
+with open('output-file-path', 'r') as f:
+    text = ''.join(f.readlines()[:50])
+data = json.dumps({'msgtype': 'markdown', 'markdown': {'title': title, 'text': text}}).encode()
+req = urllib.request.Request('WEBHOOK_URL', data=data, headers={'Content-Type': 'application/json'})
+print(urllib.request.urlopen(req).read().decode())
+"
+```
 
 ## Task Definitions
 
 ### 1. UX-AI-Daily (Every day at 9:30)
 
 **Output**: `output/ux-ai-daily/YYYY-MM-DD-ai-ux-daily.md`
+**DingTalk Webhook**: `https://oapi.dingtalk.com/robot/send?access_token=133b5756fa296821042b075d1f5913b47f7cea09378f9fc9640a1e5b150310a1`
 
-Generate a daily curated digest of AI + UX developments:
-- **Tools**: New AI tools for design-to-code, UI generation, prototyping, agent workflows
-- **News**: Industry announcements and product launches in AI + UX
-- **GitHub**: Trending repos for AI agents, MCP tools, workflow automation
-- **Insights**: Emerging design patterns, community discussions, expert analysis
-- Top 5-10 high-signal items, quality over quantity
-- Each item includes: concise summary, "Why it matters", source links
-
-**After generating**, run:
+**After generating**, send DingTalk notification:
 ```bash
-bash scripts/dingtalk_notify.sh --task ux-ai-daily --file output/ux-ai-daily/YYYY-MM-DD-ai-ux-daily.md
+SUMMARY=$(head -50 output/ux-ai-daily/YYYY-MM-DD-ai-ux-daily.md)
+PAYLOAD=$(jq -n --arg title "UX-AI-Daily - YYYY-MM-DD" --arg text "$SUMMARY" '{"msgtype":"markdown","markdown":{"title":$title,"text":$text}}')
+curl -s -X POST "https://oapi.dingtalk.com/robot/send?access_token=133b5756fa296821042b075d1f5913b47f7cea09378f9fc9640a1e5b150310a1" -H "Content-Type: application/json" -d "$PAYLOAD"
 ```
 
 ### 2. GitHub + Claude-Skill (Every day at 9:00)
 
 **Output**: `output/github-claude-skill/YYYY-MM-DD-github-claude-skill.md`
+**DingTalk Webhook**: `https://oapi.dingtalk.com/robot/send?access_token=c2dffb9cbee65b4124e4fa478e3bba9ae7a970c9499fd5d5d2215b144cb74899`
 
-Generate daily GitHub trending + Claude skills report:
-- **GitHub Trending**: Top trending repos related to AI, agents, MCP, developer tools
-- **Claude Skills**: New or updated Claude Code skills, MCP servers, integrations
-- **Developer Tools**: Notable releases, updates, and new developer tools
-- **Community**: Interesting discussions, PRs, and open source contributions
-
-**After generating**, run:
+**After generating**, send DingTalk notification:
 ```bash
-bash scripts/dingtalk_notify.sh --task github-claude-skill --file output/github-claude-skill/YYYY-MM-DD-github-claude-skill.md
+SUMMARY=$(head -50 output/github-claude-skill/YYYY-MM-DD-github-claude-skill.md)
+PAYLOAD=$(jq -n --arg title "GitHub+Claude-Skill - YYYY-MM-DD" --arg text "$SUMMARY" '{"msgtype":"markdown","markdown":{"title":$title,"text":$text}}')
+curl -s -X POST "https://oapi.dingtalk.com/robot/send?access_token=c2dffb9cbee65b4124e4fa478e3bba9ae7a970c9499fd5d5d2215b144cb74899" -H "Content-Type: application/json" -d "$PAYLOAD"
 ```
 
 ### 3. Claude Code Alpha Radar (Every day at 10:00)
 
 **Output**: `output/alpha-radar/YYYY-MM-DD-alpha-radar.md`
+**DingTalk Webhook**: `https://oapi.dingtalk.com/robot/send?access_token=fec4aa71a87432764715ac48ae2cc542f91f66a5738f6725650c5fd46ec1796c`
 
-Generate a daily alpha/cutting-edge AI technology radar:
-- **Breakthroughs**: Latest research papers, model releases, and technical advances
-- **Alpha Products**: Early-stage AI products and tools worth watching
-- **Industry Signals**: Funding, partnerships, strategic moves in AI
-- **Technical Deep Dive**: One notable technical development explained in detail
-
-**After generating**, run:
+**After generating**, send DingTalk notification:
 ```bash
-bash scripts/dingtalk_notify.sh --task alpha-radar --file output/alpha-radar/YYYY-MM-DD-alpha-radar.md
+SUMMARY=$(head -50 output/alpha-radar/YYYY-MM-DD-alpha-radar.md)
+PAYLOAD=$(jq -n --arg title "Alpha Radar - YYYY-MM-DD" --arg text "$SUMMARY" '{"msgtype":"markdown","markdown":{"title":$title,"text":$text}}')
+curl -s -X POST "https://oapi.dingtalk.com/robot/send?access_token=fec4aa71a87432764715ac48ae2cc542f91f66a5738f6725650c5fd46ec1796c" -H "Content-Type: application/json" -d "$PAYLOAD"
 ```
 
 ### 4. Claude Code Weekly Intelligence (Every Monday at 10:30)
 
 **Output**: `output/weekly-intelligence/YYYY-MM-DD-weekly-intelligence.md`
+**DingTalk Webhook**: `https://oapi.dingtalk.com/robot/send?access_token=32d9a4e7aedd883f1f7137ce3ce8456a1dbfef10590566b294460c23dbe080d4`
 
-Generate a weekly AI intelligence summary report:
-- **Week in Review**: Key developments and trends from the past week
-- **Model Updates**: New model releases, benchmarks, capabilities
-- **Tool Ecosystem**: Major tool/framework updates and new releases
-- **Market Moves**: Significant business/funding events in AI
-- **Outlook**: What to watch for in the coming week
-- Comprehensive weekly overview, deeper analysis than daily reports
-
-**After generating**, run:
+**After generating**, send DingTalk notification:
 ```bash
-bash scripts/dingtalk_notify.sh --task weekly-intelligence --file output/weekly-intelligence/YYYY-MM-DD-weekly-intelligence.md
+SUMMARY=$(head -50 output/weekly-intelligence/YYYY-MM-DD-weekly-intelligence.md)
+PAYLOAD=$(jq -n --arg title "Weekly Intelligence - YYYY-MM-DD" --arg text "$SUMMARY" '{"msgtype":"markdown","markdown":{"title":$title,"text":$text}}')
+curl -s -X POST "https://oapi.dingtalk.com/robot/send?access_token=32d9a4e7aedd883f1f7137ce3ce8456a1dbfef10590566b294460c23dbe080d4" -H "Content-Type: application/json" -d "$PAYLOAD"
 ```
 
-## Standard Workflow for Each Task
+## Standard Workflow for Each Task (MUST follow)
 
 1. Research and generate the content using web search
 2. Save the markdown file to the correct `output/<task>/` directory
-3. Send DingTalk notification via `scripts/dingtalk_notify.sh`
+3. **Send DingTalk notification using curl command above (MANDATORY, do NOT skip)**
 4. Git add, commit, and push to the repository
 
 ## Commit Message Format

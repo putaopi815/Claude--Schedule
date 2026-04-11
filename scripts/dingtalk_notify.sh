@@ -69,30 +69,32 @@ fi
 
 # --- Task display name mapping ---
 declare -A TASK_TITLES=(
-    ["weekly-intelligence"]="📊 Weekly Intelligence"
-    ["alpha-radar"]="🔬 Alpha Radar"
-    ["github-claude-skill"]="🛠 GitHub + Claude-Skill"
-    ["ux-ai-daily"]="🎨 UX-AI-Daily"
+    ["weekly-intelligence"]="Weekly Intelligence"
+    ["alpha-radar"]="Alpha Radar"
+    ["github-claude-skill"]="GitHub + Claude-Skill"
+    ["ux-ai-daily"]="UX-AI-Daily"
 )
 
 TITLE="${TASK_TITLES[$TASK_NAME]:-$TASK_NAME}"
 DATE=$(date +"%Y-%m-%d")
 
-# --- Build message content ---
-# Extract first 50 lines as summary, escape for JSON
-SUMMARY=$(head -50 "$FILE_PATH" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+# --- Build message content using jq for safe JSON encoding ---
+SUMMARY=$(head -50 "$FILE_PATH")
+FULL_TEXT="${SUMMARY}
 
-# Build JSON payload
-PAYLOAD=$(cat <<ENDJSON
-{
-    "msgtype": "markdown",
-    "markdown": {
-        "title": "${TITLE} - ${DATE}",
-        "text": "${SUMMARY}\\n\\n---\\n> [View full report on GitHub](https://github.com/putaopi815/Claude--Schedule)"
-    }
-}
-ENDJSON
-)
+---
+> [View full report on GitHub](https://github.com/putaopi815/Claude--Schedule)"
+
+PAYLOAD=$(jq -n \
+    --arg title "${TITLE} - ${DATE}" \
+    --arg text "$FULL_TEXT" \
+    '{
+        msgtype: "markdown",
+        markdown: {
+            title: $title,
+            text: $text
+        }
+    }')
 
 # --- Send notification ---
 RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$WEBHOOK_URL" \

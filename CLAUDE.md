@@ -105,12 +105,25 @@ curl -s -X POST "https://oapi.dingtalk.com/robot/send?access_token=32d9a4e7aedd8
 
 1. Research and generate the content using web search
 2. Save the markdown file to the correct `output/<task>/` directory
-3. **Send DingTalk notification using curl command above (MANDATORY, do NOT skip)**
-4. Git add, commit, and push to the repository
+3. Git add, commit, and **push to main branch** (IMPORTANT: must push to main to trigger DingTalk notification)
+4. DingTalk notification is sent automatically by GitHub Actions when pushed to main
+
+## Git Push Instructions (CRITICAL)
+
+You MUST push to the main branch so that GitHub Actions triggers the DingTalk notification.
+Use this exact command:
+
+```bash
+git add output/<task>/
+git commit -m "[task-name] Add <content-type> for YYYY-MM-DD"
+git push origin HEAD:main
+```
+
+**DO NOT use `git push` alone** — it pushes to the current branch which does NOT trigger notifications.
+**ALWAYS use `git push origin HEAD:main`** to push directly to main.
 
 ## Commit Message Format
 
-Use the following format for commit messages:
 ```
 [task-name] Add <content-type> for <date>
 

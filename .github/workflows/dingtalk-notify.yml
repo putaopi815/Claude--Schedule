@@ -29,29 +29,66 @@ jobs:
           echo "Changed files:"
           echo "$CHANGED_FILES"
 
+          # Function to send DingTalk notification
+          send_dingtalk() {
+            local WEBHOOK_URL="$1"
+            local TITLE="$2"
+            local FILE="$3"
+            local GROUP_NAME="$4"
+
+            if [ -z "$WEBHOOK_URL" ]; then
+              echo "Warning: No webhook URL for $GROUP_NAME - $TITLE"
+              return
+            fi
+
+            SUMMARY=$(head -50 "$FILE")
+            PAYLOAD=$(jq -n \
+              --arg title "$TITLE" \
+              --arg text "$SUMMARY" \
+              '{msgtype:"markdown",markdown:{title:$title,text:$text}}')
+
+            RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$WEBHOOK_URL" \
+              -H "Content-Type: application/json" \
+              -d "$PAYLOAD")
+
+            HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+            BODY=$(echo "$RESPONSE" | sed '$d')
+            echo "[$GROUP_NAME] HTTP: $HTTP_CODE | Response: $BODY"
+
+            if echo "$BODY" | grep -q '"errcode":0'; then
+              echo "[$GROUP_NAME] Sent successfully: $TITLE"
+            else
+              echo "::warning::[$GROUP_NAME] DingTalk notification failed for $TITLE: $BODY"
+            fi
+          }
+
           # Process each changed file
           echo "$CHANGED_FILES" | while read FILE; do
             if [ -z "$FILE" ] || [ ! -f "$FILE" ]; then
               continue
             fi
 
-            # Detect task from path
+            # Detect task and get webhook URLs for both groups
             case "$FILE" in
               output/ux-ai-daily/*)
                 TITLE="UX-AI-Daily Report"
-                WEBHOOK_URL="${{ secrets.DINGTALK_WEBHOOK_UX_AI_DAILY }}"
+                WEBHOOK_1="${{ secrets.DINGTALK_WEBHOOK_UX_AI_DAILY }}"
+                WEBHOOK_2="${{ secrets.DINGTALK_WEBHOOK_UX_AI_DAILY_2 }}"
                 ;;
               output/github-claude-skill/*)
                 TITLE="GitHub+Claude-Skill Report"
-                WEBHOOK_URL="${{ secrets.DINGTALK_WEBHOOK_GITHUB_CLAUDE_SKILL }}"
+                WEBHOOK_1="${{ secrets.DINGTALK_WEBHOOK_GITHUB_CLAUDE_SKILL }}"
+                WEBHOOK_2="${{ secrets.DINGTALK_WEBHOOK_GITHUB_CLAUDE_SKILL_2 }}"
                 ;;
               output/alpha-radar/*)
                 TITLE="Alpha Radar Report"
-                WEBHOOK_URL="${{ secrets.DINGTALK_WEBHOOK_ALPHA_RADAR }}"
+                WEBHOOK_1="${{ secrets.DINGTALK_WEBHOOK_ALPHA_RADAR }}"
+                WEBHOOK_2="${{ secrets.DINGTALK_WEBHOOK_ALPHA_RADAR_2 }}"
                 ;;
               output/weekly-intelligence/*)
                 TITLE="Weekly Intelligence Report"
-                WEBHOOK_URL="${{ secrets.DINGTALK_WEBHOOK_WEEKLY_INTELLIGENCE }}"
+                WEBHOOK_1="${{ secrets.DINGTALK_WEBHOOK_WEEKLY_INTELLIGENCE }}"
+                WEBHOOK_2="${{ secrets.DINGTALK_WEBHOOK_WEEKLY_INTELLIGENCE_2 }}"
                 ;;
               *)
                 echo "Unknown task for file: $FILE, skipping."
@@ -59,34 +96,11 @@ jobs:
                 ;;
             esac
 
-            if [ -z "$WEBHOOK_URL" ]; then
-              echo "Warning: No webhook URL configured for $TITLE"
-              continue
-            fi
-
             echo "Sending notification for: $TITLE ($FILE)"
 
-            # Build payload with jq for safe JSON encoding
-            SUMMARY=$(head -50 "$FILE")
-            PAYLOAD=$(jq -n \
-              --arg title "$TITLE" \
-              --arg text "$SUMMARY" \
-              '{msgtype:"markdown",markdown:{title:$title,text:$text}}')
+            # Send to Group 1
+            send_dingtalk "$WEBHOOK_1" "$TITLE" "$FILE" "Group-1"
 
-            echo "Payload preview (title): $TITLE"
-
-            # Send to DingTalk
-            RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$WEBHOOK_URL" \
-              -H "Content-Type: application/json" \
-              -d "$PAYLOAD")
-
-            HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-            BODY=$(echo "$RESPONSE" | sed '$d')
-            echo "HTTP: $HTTP_CODE | Response: $BODY"
-
-            if echo "$BODY" | grep -q '"errcode":0'; then
-              echo "Sent successfully: $TITLE"
-            else
-              echo "::warning::DingTalk notification failed for $TITLE: $BODY"
-            fi
+            # Send to Group 2
+            send_dingtalk "$WEBHOOK_2" "$TITLE" "$FILE" "Group-2"
           done

@@ -27,6 +27,26 @@
 - **是否值得收藏**: **Yes** — 免费、Google 支持、DESIGN.md 是新范式信号
 - 🔗 [stitch.withgoogle.com](https://blog.google/innovation-and-ai/models-and-research/google-labs/stitch-ai-ui-design/)
 
+### VoltAgent/awesome-design-md — DESIGN.md 设计系统合集（GitHub 史上增速最快 awesome list）
+- **类型**: Tool / Design Protocol
+- **GitHub**: [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) ⭐ 35k（10 天内）
+- **做什么**: 从 59 个知名网站提取完整设计系统规范为 DESIGN.md 文件，供 AI coding agent 生成一致 UI。涵盖色彩、排版、组件状态、设计哲学。
+- **核心能力**: 解决 AI 生成代码「功能正确但 UI 通用」的根本问题。一个 DESIGN.md 让 agent 拥有人类设计师的设计上下文。
+- **使用场景**: 在 Claude Code / Cursor 项目中放入 DESIGN.md → agent 自动生成符合品牌设计语言的 UI 组件。
+- **为什么重要（UX 视角）**: Markdown 正在成为人类、设计、AI agent 之间的通用协议。设计师交付物从 Figma 转向 Markdown 规范，agent 直接消费设计意图而非像素。
+- **趋势标记**: **3 天内持续爆发** — 10 天 35K stars + 4.4K forks，GitHub 史上最快 awesome list
+- **是否值得收藏**: **Yes** — 2026 年 4 月最重要的 UX × AI 趋势，定义了设计与代码之间的新协议层
+
+### ui-ux-pro-max-skill — 最流行的 AI 设计 Skill（v2.0 Design System Generator）
+- **类型**: Claude Skill
+- **GitHub**: [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) ⭐ 55.8k
+- **做什么**: 为 Claude Code / Cursor / Windsurf 等 10+ 工具提供设计智能——50+ 风格、161 色板、57 字体搭配、99 UX 指南、25 图表类型。
+- **核心能力**: v2.0 旗舰 Design System Generator — AI 推理引擎分析项目需求，秒级生成完整设计系统。
+- **使用场景**: 新项目启动 → `uipro init --ai claude` → 秒级获得完整设计规范 + 组件风格指南，覆盖 React/Next.js/Vue/Svelte/Flutter 等 10 个框架。
+- **为什么重要（UX 视角）**: 将「选字体配色彩」的设计决策从人工 2-3 天压缩到秒级，最成熟的 AI 设计 Skill 生态。
+- **趋势标记**: 持续热门（社区最受欢迎的 UI/UX 设计 Skill）
+- **是否值得收藏**: **Yes** — 如果只装一个设计 Skill，就选这个
+
 ---
 
 ## 2. ⚙️ GitHub Trending Agents
@@ -67,6 +87,24 @@
 - **趋势标记**: 3 天内（4/3 发布后持续关注，4/10 Dev Community 报道）
 - **是否值得收藏**: **Yes** — 企业级首选，MCP 生态关键节点
 
+### Archon — 首个开源 AI Coding Harness Builder（YAML 定义确定性工作流）
+- **类型**: Workflow Engine / Agent Harness
+- **GitHub**: [coleam00/Archon](https://github.com/coleam00/Archon) ⭐ 15.6k
+- **功能**: 4/7 完成 TypeScript 全面重写。通过 YAML 定义 AI coding 工作流（planning → implementation → validation → code review → PR creation），将裸 LLM 代码的 6.7% PR 接受率提升至 ~70%。
+- **使用场景**: 团队标准化 AI coding 流程 → 定义 YAML 工作流 → 多项目复用 → agent 在验证门控内自动执行。
+- **为什么重要**: 代表「从 prompt engineering 到 harness engineering」的范式转移。控制 AI coding 质量的核心不再是 prompt，而是工作流骨架。
+- **趋势标记**: **24h 内持续爆发** — GitHub Trending #2，4/7 重写后日增长爆炸
+- **是否值得收藏**: **Yes** — Harness Engineering 新范式的标杆实现
+
+### Multica — 开源 Managed Agents 平台（Agent 变队友）
+- **类型**: Agent Platform
+- **GitHub**: [multica-ai/multica](https://github.com/multica-ai/multica)
+- **功能**: 将 coding agent 变成真正的「团队成员」——assign GitHub Issue 给 agent → 自动接单、写代码、报告阻塞、更新状态。支持 Claude Code / Codex / OpenClaw / OpenCode。
+- **使用场景**: 人 + AI 混合团队：agent 出现在项目看板上，有 profile、发 comment、创建 issue、主动报告 blockers。
+- **为什么重要**: 从「人使用 AI 工具」到「AI 作为团队正式成员」的本质转变。团队规模定义从 N 人 → N 人 + M agent。
+- **趋势标记**: **3 天内活跃** — v0.1.8/v0.1.9 4 月初密集更新
+- **是否值得收藏**: **Yes** — 目前最完整的开源 managed agents 方案
+
 ---
 
 ## 3. 🧩 Claude Skills
@@ -92,6 +130,26 @@
 - **趋势标记**: 3 天内（4/8 正式开源，GitHub Trending 上榜）
 - **是否值得收藏**: **Yes** — 端侧 agent 的基础设施，UX 产品的离线能力关键
 
+### Claude Code v2.1.89–v2.1.92 — 4 月密集更新（MCP 500K / /powerup / 成本分析）
+- **类型**: Platform Update
+- **核心变更**:
+  - **MCP 500K** — tool result 上限提升到 500,000 字符，大文件/数据库输出不再被截断
+  - `/powerup` — 交互式学习系统，动画演示教学 Claude Code 功能
+  - **Permission Deferral** — PreToolUse hook 新增 "defer" 选项，支持暂停等待外部信号
+  - **Write tool 优化** — 大文件 diff 计算性能提升约 60%
+  - `/cost` — 新增按模型和 cache-hit 的成本分析
+- **使用时机**: 所有 Claude Code 用户应升级到 v2.1.92，MCP 500K 对重度 MCP 用户尤其关键
+
+### oh-my-codex (OMX) v0.12.1 — Codex CLI 的增强编排层
+- **GitHub**: [Yeachan-Heo/oh-my-codex](https://github.com/Yeachan-Heo/oh-my-codex) ⭐ 2.9k
+- **工作流描述**: 给 Codex CLI 加上 hooks、agent teams、HUD 可视化 — 类似 "oh-my-zsh for AI coding"。v0.12.1（4/7）新增原生 Codex hooks、tmux 多 agent 并行、结构化工作流（autopilot / TDD / code review）。
+- **使用时机**: 使用 OpenAI Codex CLI 且需要多 agent 编排和可视化监控时。
+
+### everything-claude-code (ECC) — Claude Code 最全配置框架
+- **GitHub**: [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) ⭐ 100k+
+- **工作流描述**: 30 个专用 agent、136 个 skills、60 个 slash commands、自动化 hook 工作流。本周周增长 +19,869 stars，持续 #1。
+- **使用时机**: 想要 Claude Code「开箱即战力」的开发者，一键获得完整 agent harness 配置。
+
 ---
 
 ## 4. 💡 Emerging Patterns（本周关键新范式）
@@ -116,21 +174,35 @@ Microsoft Agent Framework 1.0 同时支持 MCP（工具调用）和 A2A（agent 
 
 **对 UX 的意义**: 设计工具（Figma）、开发工具（IDE）、部署平台之间的 agent 互操作正在变得标准化——这是「AI-native 设计工作流」的基础设施层。
 
+### 🏗️ Pattern 5: Harness Engineering 取代 Prompt Engineering
+Archon 和 Superpowers 代表的趋势——**控制 AI coding 质量的核心不再是 prompt，而是 harness（工作流骨架）**。YAML 定义验证门控、阶段划分、回归检查，agent 在框架内填充智能。裸 LLM PR 接受率 6.7% → harness-driven ~70%。
+
+**对 UX 的意义**: 设计工作流也需要同样的「harness 化」——不是让 agent 自由发挥，而是定义「设计评审 → 组件拆分 → 代码生成 → 视觉回归测试」的确定性管道。
+
+### 🤝 Pattern 6: Agent-as-Teammate（Agent 即队友）
+Multica 将 agent 放进项目管理看板，assign issue → 自动执行 → 汇报阻塞。这不是「AI 辅助」，而是 **agent 作为团队正式成员**参与协作。团队规模的定义将从「N 个人」变为「N 个人 + M 个 agent」。
+
+**对产品团队的影响**: 项目管理工具需要适配 agent 角色，设计评审流程需要考虑 agent 参与者。
+
 ---
 
 ## 📊 本日信号总结
 
-| 项目 | 类型 | 趋势 | UX 相关度 | 收藏 |
-|------|------|------|-----------|------|
-| Flowstep | Design Tool | 🔥 活跃 | ⭐⭐⭐⭐⭐ | ✅ |
-| Google Stitch 2.0 | Design Tool | 🔥 迭代中 | ⭐⭐⭐⭐⭐ | ✅ |
-| Hermes Agent v0.8 | Agent | 🚀 爆发 | ⭐⭐⭐ | ✅ |
-| Caveman | Skill | 🚀 HN 爆发 | ⭐⭐ | ✅ |
-| Superpowers | Framework | 📈 增长 | ⭐⭐⭐ | ✅ |
-| MS Agent Framework | Framework | 📈 发布 | ⭐⭐⭐ | ✅ |
-| last30days-skill | Skill | 📈 活跃 | ⭐⭐ | ✅ |
-| Antigravity Skills | Skill Registry | 📈 增长 | ⭐⭐ | ✅ |
-| LiteRT-LM | Infra | 🆕 开源 | ⭐⭐⭐ | ✅ |
+| # | 项目 | 类型 | 趋势 | UX 相关度 | 收藏 |
+|---|------|------|------|-----------|------|
+| 1 | awesome-design-md | Protocol | 🚀 10天35K stars | ⭐⭐⭐⭐⭐ | ✅ |
+| 2 | Flowstep | Design Tool | 🔥 活跃 | ⭐⭐⭐⭐⭐ | ✅ |
+| 3 | Google Stitch 2.0 | Design Tool | 🔥 迭代中 | ⭐⭐⭐⭐⭐ | ✅ |
+| 4 | ui-ux-pro-max-skill | Skill | 📈 55.8K stars | ⭐⭐⭐⭐⭐ | ✅ |
+| 5 | Hermes Agent v0.8 | Agent | 🚀 爆发 | ⭐⭐⭐ | ✅ |
+| 6 | Archon | Harness | 🚀 Trending #2 | ⭐⭐⭐ | ✅ |
+| 7 | Multica | Platform | 🔥 活跃更新 | ⭐⭐⭐ | ✅ |
+| 8 | Caveman | Skill | 🚀 HN 爆发 | ⭐⭐ | ✅ |
+| 9 | Superpowers | Framework | 📈 增长 | ⭐⭐⭐ | ✅ |
+| 10 | MS Agent Framework | Framework | 📈 v1.0发布 | ⭐⭐⭐ | ✅ |
+| 11 | last30days-skill | Skill | 📈 活跃 | ⭐⭐ | ✅ |
+| 12 | Antigravity Skills | Skill Registry | 📈 增长 | ⭐⭐ | ✅ |
+| 13 | LiteRT-LM | Infra | 🆕 开源 | ⭐⭐⭐ | ✅ |
 
 ---
 

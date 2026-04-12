@@ -13,23 +13,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Detect task and send DingTalk notification
         run: |
-          # Find the changed markdown file in output/
-          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- 'output/**/*.md' 2>/dev/null || echo "")
+          # Find changed markdown files in this commit
+          CHANGED_FILES=$(git log -1 --name-only --pretty=format: HEAD | grep '^output/.*\.md$' || true)
 
           if [ -z "$CHANGED_FILES" ]; then
             echo "No output markdown files changed, skipping."
             exit 0
           fi
 
-          echo "Changed files: $CHANGED_FILES"
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
 
           # Process each changed file
-          for FILE in $CHANGED_FILES; do
-            if [ ! -f "$FILE" ]; then
-              echo "File not found: $FILE, skipping."
+          echo "$CHANGED_FILES" | while read FILE; do
+            if [ -z "$FILE" ] || [ ! -f "$FILE" ]; then
               continue
             fi
 
@@ -62,7 +64,7 @@ jobs:
               continue
             fi
 
-            echo "Sending notification for: $TITLE"
+            echo "Sending notification for: $TITLE ($FILE)"
 
             # Build payload with jq for safe JSON encoding
             SUMMARY=$(head -50 "$FILE")
@@ -70,6 +72,8 @@ jobs:
               --arg title "$TITLE" \
               --arg text "$SUMMARY" \
               '{msgtype:"markdown",markdown:{title:$title,text:$text}}')
+
+            echo "Payload preview (title): $TITLE"
 
             # Send to DingTalk
             RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$WEBHOOK_URL" \

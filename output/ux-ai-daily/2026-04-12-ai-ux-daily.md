@@ -1,81 +1,84 @@
-# UX-AI Daily | 2026-04-12
+# UX-AI-Daily | 2026-04-12
 
-> 面向 UX / 产品设计师的 AI 行业日报。聚焦过去 24h–3 天内最值得关注的动态。
+> 面向 UX / 产品设计师的 AI 行业日报。仅收录过去 24h–3 天内的高质量时效信息。
 
 ---
 
 ## 🧰 工具 Tools
 
-### 1. Hermes Agent v0.8.0 — 自进化 AI Agent 框架大版本更新
-- **核心内容**：Nous Research 于 4 月 8 日发布 Hermes Agent v0.8.0，新增后台任务自动通知、跨平台实时模型切换、MCP OAuth 2.1 支持、Slack/Telegram 审批按钮等。该 Agent 具备自我学习循环——能从经验中创建技能、在使用中改进、并构建持续加深的用户模型。
-- **为什么重要**：代表了 Agent 从"工具"到"队友"的范式转变。对 UX 设计师而言，审批按钮、活动状态反馈等交互模式是 Agent UI 设计的参考范例。
-- **链接**：[GitHub Release](https://github.com/NousResearch/hermes-agent/releases/tag/v2026.4.8)
-- **时间**：2026-04-08（过去 3 天内）
+### 1. Archon — 首个开源 AI 编程 Harness Builder（完全重写）
+- **核心内容**：Archon 于 4/7 完成从 Python 到 TypeScript 的完全重写，成为首个开源的 AI 编程 harness builder。通过 YAML 定义工作流（规划→实现→验证→代码审查→PR），将 AI 编程变得确定性且可重复。每个工作流运行在独立 git worktree 中，支持并行执行。
+- **为什么重要**：Harness engineering 已被 Stripe（每周 1,300 PRs）和 OpenAI（100 万行代码）验证。对产品团队而言，这意味着 AI 辅助开发流程可以标准化和可视化管理，大幅降低 agent 编程的不确定性。
+- **链接**：https://github.com/coleam00/Archon
+- **时间**：4/7 重写发布，今日 GitHub Trending #3（+1,346 stars）
 
-### 2. OpenOwl — 本地桌面自动化 Agent（MCP 兼容）
-- **核心内容**：OpenOwl 是一个 macOS 桌面自动化 Agent，让 Claude、Codex 等 AI 助手能看到屏幕、点击按钮、填写表单。所有数据保留在本地，支持自然语言下达任务。可自动化 LinkedIn 操作、Shopify 管理、CRM 数据录入等"无 API"场景。
-- **为什么重要**：AI Agent 正从"对话框"走向"操作桌面"。这类工具将深刻改变产品设计中的自动化边界——设计师需要思考 Agent 如何"看"和"操作"现有 UI。
-- **链接**：[Product Hunt](https://www.producthunt.com/products/openowl) | [官网](https://openowl.dev/)
-- **时间**：近期上线（Product Hunt 活跃中）
+### 2. NousResearch Hermes Agent v0.8.0 — 自进化多平台 AI Agent
+- **核心内容**：Hermes Agent 发布 v0.8.0「智能释放版」，新增后台任务自动通知、跨平台实时模型切换、MCP OAuth 2.1 支持，合并 209 个 PR。支持从 Telegram / Discord / Slack / WhatsApp / Signal / CLI 多入口统一交互，可运行在 $5 VPS 或 serverless 环境。
+- **为什么重要**：这是一个真正的「跨平台 copilot」范式——用户在任何聊天平台与 agent 对话，agent 在云端自主执行任务。对 UX 设计师而言，这种「对话即界面」的多端一致体验正在成为 agent 产品的标准交互模式。
+- **链接**：https://github.com/NousResearch/hermes-agent
+- **时间**：4/8 发布 v0.8.0，今日 GitHub Trending #1（+6,438 stars）
+
+### 3. CopilotKit + AG-UI + A2UI — Agent 界面协议栈标准化
+- **核心内容**：Oracle、Google、CopilotKit 联合发布 agent UI 协议栈：AG-UI（Agent↔UI 实时双向通信协议）+ A2UI（Google 的 agent 声明式 UI 规范，用 JSONL 描述表单/表格/多步流程）。CopilotKit 作为 Google A2UI 的首批 launch partner 亮相 Google Cloud Next 2026。
+- **为什么重要**：这是 AI agent UX 从「全靠聊天」走向「结构化界面」的关键基础设施。设计师可以用三种模式构建 generative UI：受控式（AG-UI）、声明式（A2UI）、开放式（MCP Apps）。意味着 agent 产品的 UI 设计终于有了标准协议。
+- **链接**：https://www.copilotkit.ai/blog/ag-ui-and-a2ui-explained-how-the-emerging-agentic-stack-fits-together
+- **时间**：过去 3 天内持续更新，Google Cloud Next 展示
 
 ---
 
 ## 📰 新闻 News
 
-### 3. Anthropic 发布 Claude Mythos Preview + Project Glasswing 安全计划
-- **核心内容**：Anthropic 于 4 月 7 日发布 Mythos Preview 模型，在网络安全任务上表现惊人——已发现数千个主流操作系统和浏览器的零日漏洞，首次尝试漏洞利用成功率达 83.1%。因能力过强，Anthropic 不会公开发布，而是通过 Project Glasswing 与微软、苹果、亚马逊等合作方共享，承诺投入 $1 亿使用额度。
-- **为什么重要**：标志着 AI 能力进入"超人类"领域。对产品设计者而言，安全与信任设计（trust UI）将变得前所未有地重要——如何让用户理解和控制超强 AI 是核心 UX 挑战。
-- **链接**：[TechCrunch](https://techcrunch.com/2026/04/07/anthropic-mythos-ai-model-preview-security/) | [NPR](https://www.npr.org/2026/04/11/nx-s1-5778508/anthropic-project-glasswing-ai-cybersecurity-mythos-preview)
-- **时间**：2026-04-07（过去 3 天内），NPR 跟进报道 04-11
+### 4. Anthropic 发布 Project Glasswing 与 Claude Mythos Preview
+- **核心内容**：Anthropic 推出 Project Glasswing 安全计划，联合 AWS、Apple、Google、Microsoft、NVIDIA 等 12 家合作伙伴，投入 $1 亿使用额度。Claude Mythos Preview 在 SWE-bench Verified 上达 93.9%（vs Opus 4.6 的 80.8%），已自主发现数千个零日漏洞，包括一个存在 17 年的 FreeBSD 远程代码执行漏洞。
+- **为什么重要**：Mythos 展示了 AI agent 自主发现和利用漏洞的能力达到新高度。对产品设计而言，安全性将成为 AI-native 产品的核心设计维度——任何涉及 agent 自主行动的产品都需要重新思考信任模型和权限 UX。
+- **链接**：https://www.anthropic.com/glasswing
+- **时间**：4/7 发布，4/11 NPR 持续报道
 
-### 4. Meta 发布 Muse Spark — 首个 Meta Superintelligence Labs 模型
-- **核心内容**：Meta 于 4 月 8 日发布 Muse Spark，原生多模态推理模型，支持工具调用、视觉思维链和多 Agent 编排。在 Artificial Analysis 指数中排名第 4（仅次于 Gemini 3.1 Pro、GPT-5.4、Claude Opus 4.6）。由 Alexandr Wang 领导开发，将逐步部署到 WhatsApp、Instagram、Facebook 等平台。
-- **为什么重要**：Meta 重返 AI 第一梯队。Muse Spark 的多模态 + Agent 编排能力意味着社交平台内将出现更丰富的 AI 原生交互，产品设计师需关注"平台内 AI Agent"的 UX 模式。
-- **链接**：[TechCrunch](https://techcrunch.com/2026/04/08/meta-debuts-the-muse-spark-model-in-a-ground-up-overhaul-of-its-ai/) | [Meta AI Blog](https://ai.meta.com/blog/introducing-muse-spark-msl/)
-- **时间**：2026-04-08（过去 3 天内）
+### 5. Google Gemma 4 — 面向 Agent 和边缘设备的开源模型家族
+- **核心内容**：Google DeepMind 发布 Gemma 4 系列，包含 E2B / E4B / 26B MoE / 31B Dense 四个版本。原生支持 function calling、结构化 JSON 输出、多模态（视频/图片/音频），Apache 2.0 开源。31B 模型在 Arena AI 排名开源模型第 3。
+- **为什么重要**：Gemma 4 让 agent 能力下沉到边缘设备（手机/嵌入式），意味着本地化的 AI copilot 和 agent UX 成为可能——无需云端即可实现多步规划和工具调用，对离线场景和隐私敏感产品的 UX 设计有重大影响。
+- **链接**：https://blog.google/innovation-and-ai/technology/developers-tools/gemma-4/
+- **时间**：4/2 发布，过去 3 天内持续获得关注
 
-### 5. MCP（Model Context Protocol）突破 9700 万安装量，成为 Agent 基础设施标准
-- **核心内容**：Anthropic 的 MCP 协议在 2026 年 3 月达到 9700 万月度 SDK 下载量，从 2024 年 11 月的约 200 万增长 4750%。生态系统已超过 5,800+ 社区和企业服务器，覆盖数据库、CRM、云平台等各类场景。
-- **为什么重要**：MCP 正在成为 AI Agent 连接外部工具的事实标准。对 UX/产品设计而言，理解 MCP 就是理解"AI Agent 如何获取上下文"——这是设计 Agent 驱动产品的基础架构知识。
-- **链接**：[The New Stack](https://thenewstack.io/why-the-model-context-protocol-won/) | [详细报告](https://www.affiliatebooster.com/anthropic-mcp-protocol-97-million-installs/)
-- **时间**：2026 年 3 月里程碑，4 月持续讨论中
+### 6. Microsoft 发布 MAI 多模态模型三件套
+- **核心内容**：Microsoft 发布 MAI-Transcribe-1（语音转文字，25 种语言，成本降 50%）、MAI-Voice-1（高保真语音生成，1 秒内生成 60 秒音频）、MAI-Image-2（文生图，Arena.ai 排名第 3）。均已上线 Microsoft Foundry。
+- **为什么重要**：语音交互和多模态正在成为 agent 产品的标准能力。MAI-Voice-1 的实时语音生成能力使得对话式 agent 的语音 UX 成本大幅降低，为设计师设计语音优先的 agent 界面提供了基础设施。
+- **链接**：https://microsoft.ai/news/today-were-announcing-3-new-world-class-mai-models-available-in-foundry/
+- **时间**：4/2 发布
 
 ---
 
-## 💻 GitHub 趋势
+## 💻 GitHub
 
-### 6. multica-ai/multica — 人类 + Agent 混合团队的任务管理平台
-- **Star**：8,075（今日 +1,948）
-- **核心内容**：开源的 Managed Agents 平台，将 Claude Code、Codex、OpenClaw 等编码 Agent 变成"真正的队友"——可分配任务、追踪进度、复合技能。Agent 有 Profile、能报告状态、创建 Issue、发表评论。支持自部署，代码不经过 Multica 服务器。
-- **为什么重要**：这是 "Human + Agent 协作" 的产品化尝试。Activity Feed 中人类和 Agent 并列工作的界面，是 Agent-native 产品设计的前沿参考。
-- **链接**：[GitHub](https://github.com/multica-ai/multica) | [官网](https://multica.ai/)
+### 7. GitNexus — 零服务端代码知识图谱引擎
+- **核心内容**：GitNexus 将代码库转化为知识图谱，用 Tree-sitter 解析函数/类/导入/调用链为图节点和边，内置 Graph RAG Agent。完全在浏览器端运行，支持 TypeScript / Python / Java / Go / Rust 等 8 种语言。
+- **为什么重要**：代码理解的可视化和图谱化是 AI 辅助开发工具 UX 的新方向。这种「代码即图谱」的交互模式为设计 AI 代码助手的导航和探索体验提供了全新范式。
+- **链接**：https://github.com/abhigyanpatwari/GitNexus
+- **时间**：4/10 登顶 GitHub Trending #1（单日 +1,195 stars）
 
-### 7. coleam00/Archon — 首个开源 AI 编码 Harness 构建器
-- **Star**：16,520（今日 +1,346）
-- **核心内容**：让 AI 编码变得确定性和可重复。提供开源的 Harness 构建工具，帮助团队标准化 AI 编码流程。
-- **为什么重要**：AI 编码工具正在从"黑箱"走向"可控"——设计师和产品经理可以通过 Harness 理解和规范 AI 的输出行为，这对 AI-assisted 开发流程的 UX 至关重要。
-- **链接**：[GitHub](https://github.com/coleam00/Archon)
+### 8. obra/superpowers — Agent 技能框架与开发方法论
+- **核心内容**：Superpowers 为 AI 编程 agent 提供模块化的「技能」系统：brainstorming → git-worktrees → writing-plans → test-driven-development，每个技能都有明确的触发条件和工作流。已上线 Claude 插件市场。
+- **为什么重要**：这是将「软件工程最佳实践」编码为 agent 技能的范式。对产品团队而言，这种可组合的技能框架让 AI agent 的行为可预测、可审计，也为设计 agent 交互流程提供了方法论参考。
+- **链接**：https://github.com/obra/superpowers
+- **时间**：今日 GitHub Trending（+1,591 stars），4/10 被多家媒体报道
 
-### 8. obra/superpowers — Agentic 技能框架与开发方法论
-- **Star**：147,269（今日 +1,591）
-- **核心内容**：一个 Agentic Skills 框架和软件开发方法论，提供结构化的方式让 AI Agent 获取和使用"技能"。
-- **为什么重要**：Skills 系统是 Agent 能力的模块化载体。对产品设计而言，理解"技能即能力单元"的模式，有助于设计更好的 Agent 能力发现和管理 UX。
-- **链接**：[GitHub](https://github.com/obra/superpowers)
+### 9. awesome-design-systems — 设计系统资源集合再度爆火
+- **核心内容**：这个经典的设计系统资源集合今日在 GitHub Trending 再度爆发式增长，收录了各大公司和开源项目的设计系统。
+- **为什么重要**：在 AI 生成 UI 的时代，设计系统作为 AI 的「设计约束」和「品牌一致性守护者」变得比以往任何时候都重要。今日的爆火可能与 AI design-to-code 工具需要设计系统作为输入有关。
+- **链接**：https://github.com/alexpate/awesome-design-systems
+- **时间**：今日 GitHub Trending（+2,050 stars）
 
 ---
 
 ## 💡 洞察 Insights
 
-### 9. AG-UI 协议：Agent 与用户交互的新标准层
-- **核心内容**：CopilotKit 推出的 AG-UI（Agent–User Interaction）协议已突破 9,000 GitHub Stars，周安装量达 12 万次。该协议定义了 Agent 后端与前端之间的双向实时通信标准——通过 JSON 事件流传输消息、工具调用、状态补丁和生命周期信号。Oracle、Google 和 CopilotKit 已联合发布集成方案。
-- **为什么重要**：如果 MCP 定义了"Agent 如何连接工具"，AG-UI 则定义了"Agent 如何与用户交互"。这对 UX 设计是根本性的——Agent UI 不再是即兴设计，而是有协议规范的。Generative UI（运行时动态生成界面）正在成为主流模式。
-- **链接**：[AG-UI 协议](https://www.copilotkit.ai/ag-ui) | [GitHub](https://github.com/ag-ui-protocol/ag-ui)
-
-### 10. 从 Conversational UI 到 Delegative UI：2026 年 AI 交互范式转变
-- **核心内容**：2026 年 AI 交互正从"对话式 UI"（问 AI 一个问题）转向"委托式 UI"（给 AI 一个目标）。Google Stitch 的"Vibe Design"概念让用户专注于意图和感觉，将布局、间距、组件等劳动交给 AI。Figma Make 将 AI 直接嵌入设计文件。Agent 不再是被动工具，而是主动参与者。
-- **为什么重要**：这是 UX 设计师必须内化的趋势。传统的"用户操作 → 系统响应"模型正在被"用户委托 → Agent 执行 → 用户确认"取代。设计 Agent 原生产品需要全新的交互模式、信任机制和控制权分配。
-- **链接**：[CopilotKit Generative UI Guide](https://www.copilotkit.ai/blog/the-developer-s-guide-to-generative-ui-in-2026) | [Google Stitch](https://blog.google/innovation-and-ai/models-and-research/google-labs/stitch-ai-ui-design/)
+### 10. Agent UX 正在从「聊天框」走向「协议驱动的结构化界面」
+- **核心内容**：本周多个信号共同指向一个趋势：AI agent 的 UI 层正在经历根本性变革。AG-UI/A2UI 协议的标准化、Hermes Agent 的多平台统一交互、Archon 的可视化工作流 dashboard，都在证明——chat 不再是 agent 的唯一界面。三种 generative UI 模式正在成型：受控式（组件映射）、声明式（agent 自描述 UI）、开放式（agent 自主渲染）。
+- **为什么重要**：这是 UX 设计师必须关注的范式转变。设计 agent 产品不再是「设计一个聊天界面」，而是设计一个「agent 可以根据任务上下文动态组装的界面系统」。设计师需要从组件库思维升级到协议思维——定义 agent 可以调用哪些 UI 模式，而非画死每一个界面。
+- **链接**：https://www.copilotkit.ai/blog/the-developer-s-guide-to-generative-ui-in-2026
+- **时间**：过去一周持续演进
 
 ---
 
-*本日报由 AI 自动生成，信息截至 2026-04-12。建议点击原始链接获取完整内容。*
+*本报告数据截至 2026-04-12，优先收录过去 24h–3 天内的时效信息。*
+*信息来源：GitHub Trending、TechCrunch、The Verge、Anthropic 官方、Google 官方、Microsoft 官方、CopilotKit、Hacker News。*

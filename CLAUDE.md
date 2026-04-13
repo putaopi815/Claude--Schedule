@@ -58,6 +58,54 @@ print(urllib.request.urlopen(req).read().decode())
 **Output**: `output/ux-ai-daily/YYYY-MM-DD-ai-ux-daily.md`
 **DingTalk Webhook**: `https://oapi.dingtalk.com/robot/send?access_token=133b5756fa296821042b075d1f5913b47f7cea09378f9fc9640a1e5b150310a1`
 
+#### MANDATORY: Timeliness Rules (时效性强制规则)
+
+Every item in the report MUST have a verifiable publication date. Enforce these rules strictly:
+
+1. **Priority window**: Past 24 hours (from report generation time)
+2. **Extended window**: Past 3 calendar days (only if 24h content is insufficient)
+3. **Hard cutoff**: Any content older than 3 days MUST be excluded — no exceptions
+4. **Prohibited content**: Summaries, year-end lists, roundup articles, undated trend pieces
+5. **Date labeling**: Every item MUST display its exact publication date AND a timeliness tag:
+   - `过去24h` — published within last 24 hours
+   - `过去3天内` — published within last 3 days
+   - `今天` — published today
+6. **Verification**: Before including any item, confirm its publication date from the source. If the date cannot be verified, do NOT include it.
+7. **Self-check**: After drafting the report, re-scan all items. Remove any that fall outside the 3-day window.
+
+#### Content Scope & Priority
+
+**Information Sources (priority order):**
+1. Official releases (product launches, model updates, company announcements)
+2. High-quality tech media (The Verge, TechCrunch, InfoQ, VentureBeat, etc.)
+3. GitHub Trending (repos with rapid star growth in past 1-3 days)
+4. Tech communities (Hacker News, Reddit, Twitter/X)
+
+**Focus Areas (priority order):**
+1. **UX / Product Design AI tools** (HIGHEST priority)
+   - UI generation / design-to-code / prototyping tools
+   - AI Agent / workflow automation
+   - Design assistance (user research, usability analysis)
+2. **Major AI industry news**
+   - New model releases / platform updates
+   - AI agent / automation / human-AI interaction breakthroughs
+3. **GitHub trending projects**
+   - AI agents / MCP / workflow tools
+   - New skill / prompt systems / frameworks
+   - Must meet at least one: rapid star growth in 3 days, active community discussion, or first-time release
+4. **AI-native UX trends**
+   - New interaction patterns (agent UI, copilot UI)
+   - Design paradigm shifts
+
+**Fallback rule**: If UX-related content within the time window is insufficient, expand to broader AI industry (agent / infra / model) — but STILL within the 3-day time window.
+
+#### Output Format
+
+- 5-10 high-quality items only (quality over quantity)
+- Each item MUST include: title, 1-2 sentence summary, why it matters (for UX/product), source link, **exact publication date**
+- Group by category: 🧰 工具 Tools / 📰 新闻 News / 💻 GitHub / 💡 洞察 Insights
+- Style: high information density, professional but concise, for UX/product designers
+
 **After generating**, send DingTalk notification:
 ```bash
 SUMMARY=$(head -50 output/ux-ai-daily/YYYY-MM-DD-ai-ux-daily.md)

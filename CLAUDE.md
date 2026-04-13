@@ -149,12 +149,83 @@ PAYLOAD=$(jq -n --arg title "Weekly Intelligence - YYYY-MM-DD" --arg text "$SUMM
 curl -s -X POST "https://oapi.dingtalk.com/robot/send?access_token=32d9a4e7aedd883f1f7137ce3ce8456a1dbfef10590566b294460c23dbe080d4" -H "Content-Type: application/json" -d "$PAYLOAD"
 ```
 
+## Timeliness Enforcement（强制实效性规则）
+
+所有任务必须严格遵守以下实效性约束。这是硬性规则，不可跳过。
+
+### 时间窗口（按优先级排列）
+
+| 优先级 | 时间范围 | 收录条件 |
+|--------|---------|---------|
+| P0（最优先） | 过去 24 小时内 | 新发布 / 新版本 / star 爆发 / 社区热议 |
+| P1（补充） | 过去 3 天内 | 明确的趋势信号（star 快速增长、HN/Reddit 热帖、版本发布） |
+| P2（例外） | 超过 3 天 | **仅当**出现重大更新时收录（爆发式增长、里程碑版本、范式变化），并必须标注原因 |
+
+### 搜索策略（必须执行）
+
+1. **搜索查询必须包含当前日期或时间范围**
+   - 使用 `"April 2026"`、`"this week"`、`"today"` 等时间限定词
+   - 禁止使用无时间限定的泛搜索（如 "best AI tools"）
+2. **多源交叉验证**
+   - 每个项目至少从 2 个独立来源确认其时效性（GitHub release date、新闻报道日期、HN 讨论时间等）
+   - 不能仅凭搜索结果排名判断时效性
+3. **GitHub 项目必须验证**
+   - 检查最近一次 commit / release 日期
+   - 检查近 7 天 star 增长趋势
+   - 无法验证时效性的项目不得收录
+
+### 每条内容必须标注时效标签
+
+每个收录项目必须包含以下标签之一：
+
+- `🔴 24h内` — 过去 24 小时内发布/爆发
+- `🟡 3天内` — 过去 3 天内发布/爆发
+- `🟢 重大更新` — 超过 3 天但有重大更新（必须说明原因）
+- `⚪ 持续趋势` — 持续增长中的项目（必须有近期数据支撑）
+
+### 禁止收录的内容
+
+- ❌ 没有明确发布日期或趋势数据的项目
+- ❌ 仅因"star 总量高"而收录的老项目（没有近期增长信号）
+- ❌ "awesome-xxx" 合集类仓库（除非本身在 24h 内爆发）
+- ❌ 概念性项目（无可运行代码、无 release）
+- ❌ 与前一天报告完全重复的内容（除非有新版本/新进展）
+
+### 去重规则
+
+- 生成报告前，必须检查 `output/<task>/` 目录中最近 3 天的历史报告
+- 如果某项目已在历史报告中出现，仅在有**新版本、新功能、新里程碑**时才可再次收录，并必须标注"更新"
+- 完全重复的内容直接跳过
+
+### 各任务时效性要求
+
+| 任务 | 主要时间窗口 | 最大回溯范围 |
+|------|-------------|-------------|
+| ux-ai-daily | 24 小时 | 3 天 |
+| github-claude-skill | 24 小时 | 3 天 |
+| alpha-radar | 24 小时 | 3 天 |
+| weekly-intelligence | 7 天 | 14 天 |
+
+### 报告头部必须包含时效声明
+
+每份报告开头必须包含：
+
+```markdown
+> **Date**: YYYY-MM-DD
+> **Time Window**: 过去 24h（优先）/ 3 天内（补充）
+> **Sources Checked**: GitHub Trending / HN / Reddit / Twitter / Release Notes
+> **Dedup Check**: ✅ 已对比最近 3 天报告
+```
+
 ## Standard Workflow for Each Task (MUST follow)
 
-1. Research and generate the content using web search
-2. Save the markdown file to the correct `output/<task>/` directory
-3. Git add, commit, and **push to main branch** (IMPORTANT: must push to main to trigger DingTalk notification)
-4. DingTalk notification is sent automatically by GitHub Actions when pushed to main
+1. **Check historical reports** — Read last 3 days of reports in `output/<task>/` for dedup
+2. Research and generate the content using web search **with time-constrained queries**
+3. **Verify timeliness** — Confirm each item has a verifiable recent date/signal
+4. **Tag each item** — Add timeliness label (🔴/🟡/🟢/⚪)
+5. Save the markdown file to the correct `output/<task>/` directory
+6. Git add, commit, and **push to main branch** (IMPORTANT: must push to main to trigger DingTalk notification)
+7. DingTalk notification is sent automatically by GitHub Actions when pushed to main
 
 ## Git Push Instructions (CRITICAL)
 

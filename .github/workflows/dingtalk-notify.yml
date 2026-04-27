@@ -3,7 +3,7 @@ name: DingTalk Notification
 on:
   push:
     branches:
-      - '**'
+      - main
     paths:
       - 'output/**/*.md'
 

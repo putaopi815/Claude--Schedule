@@ -2,6 +2,11 @@
 
 This repo is used by 4 Claude Code Scheduled Tasks. Each task generates content, saves it to the `output/` directory, and commits/pushes to GitHub. DingTalk notifications are sent automatically by GitHub Actions — do NOT attempt to send them directly via curl.
 
+## 语言要求（Language Requirement）
+
+**所有报告内容必须用中文输出。** 包括：正文、摘要、洞察、模式描述、机会点等所有内容。
+标题可保留中英双语格式（如 `## 🧩 Top Signals（本周关键信号）`），但内容一律使用中文。
+
 ## Project Structure
 
 ```

@@ -87,6 +87,12 @@ Every item in the report MUST have a verifiable publication date. Enforce these 
 
 **Output**: `output/weekly-intelligence/YYYY-MM-DD-weekly-intelligence.md`
 
+**⚡ Efficiency rules（防超时）:**
+- Max **4 web searches** total — combine topics into broad queries
+- Report length: **max 400 lines** — quality over quantity
+- Do NOT read more than 1 historical report for dedup check
+- Write directly from search results; do NOT loop back to verify every item
+
 ## Timeliness Enforcement（强制实效性规则）
 
 所有任务必须严格遵守以下实效性约束。这是硬性规则，不可跳过。
@@ -157,13 +163,29 @@ Every item in the report MUST have a verifiable publication date. Enforce these 
 
 ## Standard Workflow for Each Task (MUST follow)
 
+**⚡ Step 0 — Skip if already done（幂等检查）**
+Before doing anything, check if today's output file already exists:
+```bash
+ls output/<task>/YYYY-MM-DD-*.md 2>/dev/null
+```
+If the file exists → **STOP. Do nothing. Output "Report already exists, skipping."**
+Do NOT regenerate, do NOT re-search, do NOT re-commit.
+
 1. **Check historical reports** — Read last 3 days of reports in `output/<task>/` for dedup
-2. Research and generate the content using web search **with time-constrained queries**
+2. Research using web search — **max 3 searches total** (make them count, use broad queries)
 3. **Verify timeliness** — Confirm each item has a verifiable recent date/signal
 4. **Tag each item** — Add timeliness label (🔴/🟡/🟢/⚪)
 5. Save the markdown file to the correct `output/<task>/` directory
 6. Git add, commit, and **push to main branch** (IMPORTANT: must push to main to trigger DingTalk notification)
 7. DingTalk notification is sent automatically by GitHub Actions when pushed to main
+
+**Search limit by task:**
+| Task | Max searches |
+|------|-------------|
+| ux-ai-daily | 3 |
+| github-claude-skill | 3 |
+| alpha-radar | 3 |
+| weekly-intelligence | 4 |
 
 ## Git Push Instructions (CRITICAL)
 
